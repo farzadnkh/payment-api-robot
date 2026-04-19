@@ -1,0 +1,1 @@
+{"status":200,"payment_methods":[{"id":"not_an_int","type":"online","title":"Online","is_clickable":"true"}]}

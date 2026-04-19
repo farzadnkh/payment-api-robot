@@ -1,0 +1,1 @@
+{"status":200,"payment_methods":[{"id":8,"type":"bnpl","title":"BNPL","is_clickable":true,"source_id":367,"options":[{"source_id":386,"title":"قسط 1","credit":0,"is_active":true,"is_default":true,"price_type":"CASH_PRICE"},{"source_id":387,"title":"قسط 3","credit":1000,"is_active":true,"is_default":true,"price_type":"CREDIT_PRICE"}]}]}
