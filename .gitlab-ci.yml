@@ -1,0 +1,23 @@
+# Optional: GitLab CI – runs Robot suite and publishes reports as artifacts
+stages:
+  - test
+
+variables:
+  ROBOT_OPTIONS: "--outputdir results --loglevel INFO"
+
+robot:payment-api:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - pip install -r requirements.txt
+  script:
+    - |
+      python mock_server.py &
+      sleep 3
+      robot $ROBOT_OPTIONS features/
+  artifacts:
+    when: always
+    paths:
+      - results/
+    name: "robot-reports-$CI_COMMIT_SHORT_SHA"
+  allow_failure: false

@@ -1,0 +1,63 @@
+name: Robot Framework – Payment API
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  robot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Start mock server
+        run: |
+          python mock_server.py &
+          sleep 3
+
+      - name: Run Robot tests
+        run: |
+          robot --outputdir results --loglevel INFO features/
+
+      - name: Publish Robot reports (job summary)
+        if: always()
+        run: |
+          echo "## Robot Framework – Payment API" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f results/output.xml ]; then
+            python3 -c "
+          import xml.etree.ElementTree as ET
+          import os
+          tree = ET.parse('results/output.xml')
+          root = tree.getroot()
+          stat = root.find('.//statistics/total/stat')
+          if stat is not None:
+              p, f = int(stat.get('pass', 0)), int(stat.get('fail', 0))
+              t = p + f
+              with open(os.environ.get('GITHUB_STEP_SUMMARY', ''), 'a') as s:
+                  s.write('| Passed | Failed | Total |\n')
+                  s.write('|--------|--------|-------|\n')
+                  s.write(f'| {p} | {f} | {t} |\n\n')
+          "
+            echo "Download the **robot-reports** artifact for \`report.html\` and \`log.html\`." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No output.xml found (tests may have failed early)." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload Robot reports (artifact)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: robot-reports
+          path: results/
