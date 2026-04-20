@@ -1,4 +1,4 @@
-"""Payment API – HTTP and JSON handling.
+﻿"""Payment API â€“ HTTP and JSON handling.
 
 Provides Robot keywords for calling the payment endpoint and parsing responses.
 Follows a clear separation: this module handles transport/parsing; validation lives in steps/.
@@ -28,7 +28,7 @@ class PaymentAPI:
         try:
             requests.get(
                 f"{self.base_url}/payment/",
-                params={"CellNumber": "09123456789", "scenario": "s1"},
+                params={"CellNumber": "00000000000", "scenario": "s1"},
                 timeout=3,
             )
         except requests.exceptions.ConnectionError:
@@ -40,7 +40,7 @@ class PaymentAPI:
                 f"Mock server at {self.base_url} did not respond within 3 seconds."
             ) from None
 
-    def get_payment_methods(self, cell_number: str = "09123456789") -> dict:
+    def get_payment_methods(self, cell_number: str = "00000000000") -> dict:
         """GET /payment/ with CellNumber. Returns parsed JSON or raises.
 
         Args:
